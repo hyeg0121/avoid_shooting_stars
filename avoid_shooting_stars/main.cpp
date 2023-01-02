@@ -44,7 +44,7 @@ int main(void)
 	/* Text */
 	Text text;
 	text.setFont(font);
-	text.setPosition(W_WIDTH / 2, 50);
+	text.setPosition(10, 50);
 
 	/* Player */
 	Player player;
@@ -65,7 +65,7 @@ int main(void)
 	{
 		spent_time = clock() - start_time;
 		score = spent_time / 1000;
-		sprintf(info, "SCORE : %10d", score);
+		sprintf_s(info, "SCORE : %10d", score);
 		text.setString(info);
 
 		Event event;
@@ -100,11 +100,22 @@ int main(void)
 		}
 
 		/* Shooting stars*/
+		//stars 움직임
 		for (int i = 0; i < STARS_NUM; i++)
 		{
 			stars[i].sprite.move(0, s_star.speed);
 		}
 
+		//일정 시간 뒤 stars respwan
+		if (spent_time % (1000 * s_star.respwan_time) < 1000 / 60 + 1) {
+			for (int i = 0; i < STARS_NUM; i++) {
+				stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
+				stars[i].speed = -(rand() % 7 + 1);
+				stars[i].sprite.setPosition(rand() % W_WIDTH - s_star.width, rand() % W_HEIGHT * 0.3);
+			}
+		}
+
+		
 		window.clear(Color::Black);
 
 		window.draw(player.sprite);
