@@ -11,7 +11,7 @@ struct Player
 	RectangleShape sprite;
 	Texture texture;
 	int speed = 3;
-	int width = 50, height = 50;
+	int width = 70, height = 70;
 	int life;
 };
 
@@ -19,7 +19,7 @@ struct Shooting_stars {
 	RectangleShape sprite;
 	Texture texture;
 	int speed = 5;
-	int width = 50, height = 50;
+	int width = 70, height = 70;
 	int respwan_time = 7;
 };
 
@@ -48,6 +48,8 @@ int main(void)
 	char info[100];
 	int is_gameover;
 
+	srand(time(0));
+
 	/* Font */
 	Font font;
 	font.loadFromFile("C:\\windows\\Fonts\\comicbd.ttf");
@@ -57,11 +59,18 @@ int main(void)
 	text.setFont(font);
 	text.setPosition(10, 50);
 
+	/* Background */
+	RectangleShape bg;
+	Texture bg_texture;
+	bg_texture.loadFromFile("./resources/images/backgroundimage.png");
+	bg.setTexture(&bg_texture);
+	bg.setSize(Vector2f(W_WIDTH, W_HEIGHT));
+
 	/* GameOver */
 	RectangleShape gameover;
 	Texture go_t;
 	go_t.loadFromFile("./resources/images/gameover.png");
-	gameover.setSize(Vector2f(400, 400));
+	gameover.setSize(Vector2f(W_WIDTH, W_HEIGHT));
 	gameover.setTexture(&go_t);
 
 	/* Player */
@@ -87,8 +96,8 @@ int main(void)
 	while (window.isOpen())
 	{
 		spent_time = clock() - start_time;
-		score = (spent_time / 1000) * 100;
-		sprintf_s(info, "SCORE : %10d", score);
+		score = (spent_time / 1000) * 25;
+		sprintf_s(info, "SCORE : %6d", score);
 		text.setString(info);
 
 		Event event;
@@ -151,9 +160,9 @@ int main(void)
 
 		
 		window.clear(Color::Black);
+		window.draw(bg);
 
 		if (player.life < 0) {
-			gameover.setPosition(450, 450);
 			window.draw(gameover);
 		}
 		else 
