@@ -33,7 +33,7 @@ int is_collide(RectangleShape obj1, RectangleShape obj2) {
 };
 
 const int W_WIDTH = 1000, W_HEIGHT = 1000;
-const int STARS_NUM = 10;
+const int STARS_NUM = 15;
 
 int main(void)
 {
@@ -66,6 +66,8 @@ int main(void)
 
 	/* Player */
 	Player player;
+	player.texture.loadFromFile("./resources/images/horse.png");
+	player.sprite.setTexture(&player.texture);
 	player.sprite.setFillColor(Color::White);
 	player.sprite.setSize(Vector2f(player.width, player.height));
 	player.sprite.setPosition(W_WIDTH / 2, W_HEIGHT * 0.8);
@@ -73,17 +75,19 @@ int main(void)
 
 	/* Shooting_stars */
 	struct Shooting_stars s_star; //sample
+	s_star.texture.loadFromFile("./resources/images/shooting-star.png");
 	struct Shooting_stars stars[STARS_NUM];
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
 		stars[i].speed = -(rand() % 8 + 1);
 		stars[i].sprite.setPosition(rand() % W_WIDTH-s_star.width, rand() % W_HEIGHT * 0.4);
+		stars[i].sprite.setTexture(&s_star.texture);
 	}
 
 	while (window.isOpen())
 	{
 		spent_time = clock() - start_time;
-		score = spent_time / 1000;
+		score = (spent_time / 1000) * 100;
 		sprintf_s(info, "SCORE : %10d", score);
 		text.setString(info);
 
@@ -149,7 +153,7 @@ int main(void)
 		window.clear(Color::Black);
 
 		if (player.life < 0) {
-			gameover.setPosition(W_WIDTH / 2, W_HEIGHT / 2);
+			gameover.setPosition(450, 450);
 			window.draw(gameover);
 		}
 		else 
