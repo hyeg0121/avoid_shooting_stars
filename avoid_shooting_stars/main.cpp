@@ -22,6 +22,9 @@ int main(void)
 
 	/* Player */
 	Player player;
+	player.sprite.setFillColor(Color::White);
+	player.sprite.setSize(Vector2f(player.width, player.height));
+	player.sprite.setPosition(W_WIDTH / 2, W_HEIGHT * 0.8);
 
 	while (window.isOpen())
 	{
@@ -46,27 +49,20 @@ int main(void)
 				player.sprite.move(-player.speed, 0);
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Up) ||
-			Keyboard::isKeyPressed(Keyboard::W)) {
-			if (player.sprite.getPosition().y >= 0) {
-				player.sprite.move(0, -player.speed);
-			}
-		}
 		if (Keyboard::isKeyPressed(Keyboard::Right) ||
 			Keyboard::isKeyPressed(Keyboard::D)) {
 			if (player.sprite.getPosition().x <= W_WIDTH - player.width) {
 				player.sprite.move(player.speed, 0);
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Down) ||
-			Keyboard::isKeyPressed(Keyboard::S)) {
-			if (player.sprite.getPosition().y <= W_HEIGHT - player.height) {
-				player.sprite.move(0, player.speed);
-			}
-		}
 
 
 
+		window.clear(Color::Black);
+
+		window.draw(player.sprite);
+
+		window.display();
 	}
 
 	return 0;
