@@ -73,7 +73,7 @@ int collision_detection(RectangleShape rect1,  RectangleShape rect2) {
 void respwan_star(Shooting_stars * stars) {
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars[i].sprite.setSize(Vector2f(stars[i].width, stars[i].height));
-		stars[i].speed;
+		stars[i].speed++;
 		stars[i].sprite.setPosition(rand() % W_WIDTH, rand() % W_HEIGHT * 0.5);
 	}
 }
@@ -259,8 +259,11 @@ int main(void)
 				player.life = 3;
 				is_gameover = 0;
 				start_time = clock();
+				for (int i = 0; i < STARS_NUM; i++)
+					stars[i].speed = 3;
 				respwan_star(stars);
 				player.speed = 4;
+				
 			}
 		}
 		else 
