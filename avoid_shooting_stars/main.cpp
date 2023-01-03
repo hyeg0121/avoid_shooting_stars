@@ -41,15 +41,14 @@ struct Shooting_stars {
 	int speed;
 	int width = 40, height = 40;
 	int respwan_time = 4;
-	int increased_speed;
 };
 
-int circular_collision_detection(RectangleShape rect1,  RectangleShape rect2) {
+int collision_detection(RectangleShape rect1,  RectangleShape rect2) {
 		if (
-			rect1.getPosition().x < rect2.getPosition().x + rect2.getSize().x &&
-			rect1.getPosition().x + rect1.getSize().x> rect2.getPosition().x &&
-			rect1.getPosition().y < rect2.getPosition().y + rect2.getSize().y &&
-			rect1.getSize().y + rect1.getPosition().y > rect2.getPosition().y
+			rect1.getPosition().x < rect2.getPosition().x + rect2.getSize().x-10 &&
+			rect1.getPosition().x + rect1.getSize().x-10> rect2.getPosition().x &&
+			rect1.getPosition().y < rect2.getPosition().y + rect2.getSize().y-10 &&
+			rect1.getSize().y + rect1.getPosition().y > rect2.getPosition().y-10
 			) {
 			return 1;
 		}
@@ -127,12 +126,11 @@ int main(void)
 	/* Shooting_stars */
 	struct Shooting_stars s_star; //sample
 	s_star.texture.loadFromFile("./resources/images/shooting-star.png");
-	s_star.increased_speed = 1;
 
 	struct Shooting_stars stars[STARS_NUM];
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
-		stars[i].speed = 5;
+		stars[i].speed = 4;
 		stars[i].sprite.setPosition(rand() % W_WIDTH-s_star.width, rand() % W_HEIGHT * 0.4);
 		stars[i].sprite.setTexture(&s_star.texture);
 	}
@@ -202,7 +200,7 @@ int main(void)
 		//player¿Í Ãæµ¹
 		for (int i = 0; i < STARS_NUM; i++) 
 		{
-			if (circular_collision_detection(player.sprite, stars[i].sprite)) {
+			if (collision_detection(player.sprite, stars[i].sprite)) {
 				score -= 100;
 				player.life--;
 			}
