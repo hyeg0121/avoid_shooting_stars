@@ -30,14 +30,26 @@ struct Shooting_stars {
 	int respwan_time = 4;
 };
 
-int is_collide(RectangleShape obj1, RectangleShape obj2) {
-	if (obj1.getGlobalBounds().intersects(obj2.getGlobalBounds())) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
+struct Textures {
+	Texture background_texture;
+	Texture horse_right_texture;
+	Texture horse_left_texture;
 };
+
+int circular_collision_detection(RectangleShape rect1,  RectangleShape rect2) {
+		if (
+			rect1.getPosition().x < rect2.getPosition().x + rect2.getSize().x &&
+			rect1.getPosition().x + rect1.getSize().x> rect2.getPosition().x &&
+			rect1.getPosition().y < rect2.getPosition().y + rect2.getSize().y &&
+			rect1.getSize().y + rect1.getPosition().y > rect2.getPosition().y
+			) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+}
+
 
 const int W_WIDTH = 1000, W_HEIGHT = 1000;
 const int STARS_NUM = 15;
@@ -57,6 +69,12 @@ int main(void)
 
 	srand(time(0));
 
+	/* Textuers */
+	struct Textures t;
+	t.background_texture.loadFromFile("./resources/images/backgroundimage.png");
+	t.horse_left_texture.loadFromFile("./resources/images/horseleft.png");
+	t.horse_right_texture.loadFromFile("./resources/images/horseright.png");
+
 	/* Font */
 	Font font;
 	font.loadFromFile("C:\\windows\\Fonts\\comicbd.ttf");
@@ -68,9 +86,7 @@ int main(void)
 
 	/* Background */
 	RectangleShape bg;
-	Texture bg_texture;
-	bg_texture.loadFromFile("./resources/images/backgroundimage.png");
-	bg.setTexture(&bg_texture);
+	bg.setTexture(&t.background_texture);
 	bg.setSize(Vector2f(W_WIDTH, W_HEIGHT));
 
 	/* GameOver */
@@ -82,8 +98,7 @@ int main(void)
 
 	/* Player */
 	Player player;
-	player.texture.loadFromFile("./resources/images/horseright.png");
-	player.sprite.setTexture(&player.texture);
+	player.sprite.setTexture(&t.horse_right_texture);
 	player.sprite.setFillColor(Color::White);
 	player.sprite.setSize(Vector2f(player.width, player.height));
 	player.sprite.setPosition(W_WIDTH / 2, W_HEIGHT * 0.8);
@@ -126,8 +141,7 @@ int main(void)
 		{
 			if (player.sprite.getPosition().x >= 0) 
 			{
-				player.texture.loadFromFile("./resources/images/horseleft.png");
-				player.sprite.setTexture(&player.texture);
+				player.sprite.setTexture(&t.horse_left_texture);
 				player.sprite.move(-player.speed, 0);
 			}
 		}
@@ -136,8 +150,7 @@ int main(void)
 		{
 			if (player.sprite.getPosition().x <= W_WIDTH - player.width) 
 			{
-				player.texture.loadFromFile("./resources/images/horseright.png");
-				player.sprite.setTexture(&player.texture);
+				player.sprite.setTexture(&t.horse_right_texture);
 				player.sprite.move(player.speed, 0);
 			}
 		}
@@ -163,7 +176,7 @@ int main(void)
 		//player¿Í Ãæµ¹
 		for (int i = 0; i < STARS_NUM; i++) 
 		{
-			if (is_collide(player.sprite, stars[i].sprite)) {
+			if (circular_collision_detection(player.sprite, stars[i].sprite)) {
 				score -= 100;
 				player.life--;
 			}
