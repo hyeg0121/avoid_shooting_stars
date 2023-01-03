@@ -212,6 +212,10 @@ int main(void)
 		//게임오버
 		if (player.life < 0) {
 			window.draw(gameover);
+			if (Keyboard::isKeyPressed(Keyboard::Space)) {
+				player.life = 1;
+				is_gameover = 0;
+			}
 		}
 		else 
 		{
