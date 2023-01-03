@@ -4,29 +4,29 @@
 #include<time.h>
 #include<SFML/Audio.hpp>
 
-/* TODO LIST
-1) 아이템 넣기
-2) 별똥별 떨어지는 속도 조금씩 올리기
-*/
 using namespace sf;
 
 const int W_WIDTH = 1000, W_HEIGHT = 1000;
 const int STARS_NUM = 15;
+const int MAX_PlAYER_SPEED = 8;
 
 struct Textures {
 	Texture background_texture;
 	Texture horse_right_texture;
 	Texture horse_left_texture;
+	Texture item_texture;
 };
 
 struct SBuffers {
 	SoundBuffer bgm_buffer;
 	SoundBuffer move_buffer;
+	SoundBuffer earned_item_buffer;
 };
 
 struct Sounds {
 	Sound bgm;
 	Sound move;
+	Sound earned_item;
 };
 
 struct Player
@@ -41,9 +41,19 @@ struct Player
 struct Shooting_stars {
 	RectangleShape sprite;
 	Texture texture;
-	int speed;
+	int speed = 3;
 	int width = 40, height = 40;
 	int respwan_time = 4;
+	int is_collide;
+};
+
+struct Item {
+	RectangleShape sprite;
+	int speed = 4;
+	int speed_up_effect = 1; 
+	int respawn_time = 15;
+	int width = 50, height = 50;
+	int is_present;
 };
 
 int collision_detection(RectangleShape rect1,  RectangleShape rect2) {
@@ -64,7 +74,7 @@ void respwan_star(Shooting_stars * stars) {
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars[i].sprite.setSize(Vector2f(stars[i].width, stars[i].height));
 		stars[i].speed;
-		stars[i].sprite.setPosition(rand() % W_WIDTH, rand() % W_HEIGHT * 0.3);
+		stars[i].sprite.setPosition(rand() % W_WIDTH, rand() % W_HEIGHT * 0.5);
 	}
 }
 
@@ -88,6 +98,7 @@ int main(void)
 	t.background_texture.loadFromFile("./resources/images/backgroundimage.png");
 	t.horse_left_texture.loadFromFile("./resources/images/horseleft.png");
 	t.horse_right_texture.loadFromFile("./resources/images/horseright.png");
+	t.item_texture.loadFromFile("./resources/images/item.png");
 
 	/* SoundBuffers & Sound */
 	struct SBuffers sb;
@@ -137,10 +148,14 @@ int main(void)
 	struct Shooting_stars stars[STARS_NUM];
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
-		stars[i].speed = 4;
 		stars[i].sprite.setPosition(rand() % W_WIDTH-s_star.width, rand() % W_HEIGHT * 0.4);
 		stars[i].sprite.setTexture(&s_star.texture);
 	}
+
+	/* Item */
+	Item item;
+	item.sprite.setSize(Vector2f(item.width, item.height));
+	item.sprite.setTexture(&t.item_texture);
 
 	while (window.isOpen())
 	{
@@ -186,7 +201,7 @@ int main(void)
 			}
 		}
 
-		/* Shooting stars*/
+		/* Shooting stars update*/
 		//stars 움직임
 		for (int i = 0; i < STARS_NUM; i++)
 		{
@@ -202,24 +217,50 @@ int main(void)
 		//player와 충돌
 		for (int i = 0; i < STARS_NUM; i++) 
 		{
-			if (collision_detection(player.sprite, stars[i].sprite)) {
+			if (collision_detection(player.sprite, stars[i].sprite)) 
+			{
 				score -= 100;
 				player.life--;
 			}
 		}
-
 		
+		/* item update */
+		//시간이 지나면 아이템 리스폰
+		if (spent_time % (1000 * item.respawn_time) < 1000 / 60 + 1)
+		{
+			item.sprite.setPosition(rand() % W_WIDTH, rand() % W_HEIGHT * 0.4);
+			item.is_present = 1;
+		}
+		//아이템이 존재하는 동안 움직임
+		if (item.is_present)
+		{
+			item.sprite.move(0, item.speed);
+		}
+		//플레이어가 아이템을 먹었을 때 효과
+		if (collision_detection(player.sprite, item.sprite))
+		{
+			player.speed += item.speed_up_effect;
+			if (player.speed > MAX_PlAYER_SPEED) {
+				player.speed = MAX_PlAYER_SPEED;
+			}
+
+			item.is_present = 0;
+			
+		}
 		window.clear(Color::Black);
 		window.draw(bg);
 
 		//게임오버
-		if (player.life < 0) {
+		if (player.life < 0)
+		{
 			window.draw(gameover);
-			if (Keyboard::isKeyPressed(Keyboard::Space)) {
-				player.life = 1;
+			if (Keyboard::isKeyPressed(Keyboard::Space)) 
+			{
+				player.life = 3;
 				is_gameover = 0;
 				start_time = clock();
 				respwan_star(stars);
+				player.speed = 4;
 			}
 		}
 		else 
@@ -228,6 +269,8 @@ int main(void)
 			window.draw(text);
 			for (int i = 0; i < STARS_NUM; i++)
 				window.draw(stars[i].sprite);
+			if (item.is_present)
+				window.draw(item.sprite);
 		}
 		
 		window.display();
