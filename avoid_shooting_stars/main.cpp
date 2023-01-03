@@ -10,6 +10,9 @@
 */
 using namespace sf;
 
+const int W_WIDTH = 1000, W_HEIGHT = 1000;
+const int STARS_NUM = 15;
+
 struct Textures {
 	Texture background_texture;
 	Texture horse_right_texture;
@@ -45,10 +48,10 @@ struct Shooting_stars {
 
 int collision_detection(RectangleShape rect1,  RectangleShape rect2) {
 		if (
-			rect1.getPosition().x < rect2.getPosition().x + rect2.getSize().x-10 &&
-			rect1.getPosition().x + rect1.getSize().x-10> rect2.getPosition().x &&
-			rect1.getPosition().y < rect2.getPosition().y + rect2.getSize().y-10 &&
-			rect1.getSize().y + rect1.getPosition().y > rect2.getPosition().y-10
+			rect1.getPosition().x+20 < rect2.getPosition().x + rect2.getSize().x &&
+			rect1.getPosition().x + rect1.getSize().x-20> rect2.getPosition().x &&
+			rect1.getPosition().y < rect2.getPosition().y + rect2.getSize().y &&
+			rect1.getSize().y + rect1.getPosition().y > rect2.getPosition().y
 			) {
 			return 1;
 		}
@@ -57,9 +60,13 @@ int collision_detection(RectangleShape rect1,  RectangleShape rect2) {
 		}
 }
 
-
-const int W_WIDTH = 1000, W_HEIGHT = 1000;
-const int STARS_NUM = 15;
+void respwan_star(Shooting_stars * stars) {
+	for (int i = 0; i < STARS_NUM; i++) {
+		stars[i].sprite.setSize(Vector2f(stars[i].width, stars[i].height));
+		stars[i].speed;
+		stars[i].sprite.setPosition(rand() % W_WIDTH, rand() % W_HEIGHT * 0.3);
+	}
+}
 
 int main(void)
 {
@@ -189,12 +196,7 @@ int main(void)
 		//老沥 矫埃 第 stars respwan
 		if (spent_time % (1000 * s_star.respwan_time) < 1000 / 60 + 1) 
 		{
-			for (int i = 0; i < STARS_NUM; i++) 
-			{
-				stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
-				stars[i].speed;
-				stars[i].sprite.setPosition(rand() % W_WIDTH - s_star.width, rand() % W_HEIGHT * 0.3);
-			}
+			respwan_star(stars);
 		}
 
 		//player客 面倒
@@ -216,7 +218,8 @@ int main(void)
 			if (Keyboard::isKeyPressed(Keyboard::Space)) {
 				player.life = 1;
 				is_gameover = 0;
-				score = 0;
+				start_time = clock();
+				respwan_star(stars);
 			}
 		}
 		else 
