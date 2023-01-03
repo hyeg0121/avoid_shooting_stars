@@ -4,13 +4,20 @@
 #include<time.h>
 #include<SFML/Audio.hpp>
 
+/* TODO LIST
+1) 아이템 넣기
+2) 별똥별 떨어지는 속도 조금씩 올리기
+3) 말 걸을 때 다그닥 소리 넣기
+4) 배경 음악 넣기
+5) 게임 오버 때 효과음 히이잉 넣기
+*/
 using namespace sf;
 
 struct Player
 {
 	RectangleShape sprite;
 	Texture texture;
-	int speed = 3;
+	int speed = 5;
 	int width = 70, height = 70;
 	int life;
 };
@@ -18,9 +25,9 @@ struct Player
 struct Shooting_stars {
 	RectangleShape sprite;
 	Texture texture;
-	int speed = 5;
-	int width = 70, height = 70;
-	int respwan_time = 7;
+	int speed = 3 ;
+	int width = 40, height = 40;
+	int respwan_time = 4;
 };
 
 int is_collide(RectangleShape obj1, RectangleShape obj2) {
@@ -38,7 +45,7 @@ const int STARS_NUM = 15;
 int main(void)
 {
 	/* window */
-	RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "AfterSchool"); // 윈도우 창 생성
+	RenderWindow window(VideoMode(W_WIDTH, W_HEIGHT), "Avoid Shooting Stars!"); // 윈도우 창 생성
 	window.setFramerateLimit(60);
 
 	/* 변수들 */
@@ -75,7 +82,7 @@ int main(void)
 
 	/* Player */
 	Player player;
-	player.texture.loadFromFile("./resources/images/horse.png");
+	player.texture.loadFromFile("./resources/images/horseright.png");
 	player.sprite.setTexture(&player.texture);
 	player.sprite.setFillColor(Color::White);
 	player.sprite.setSize(Vector2f(player.width, player.height));
@@ -119,6 +126,8 @@ int main(void)
 		{
 			if (player.sprite.getPosition().x >= 0) 
 			{
+				player.texture.loadFromFile("./resources/images/horseleft.png");
+				player.sprite.setTexture(&player.texture);
 				player.sprite.move(-player.speed, 0);
 			}
 		}
@@ -127,6 +136,8 @@ int main(void)
 		{
 			if (player.sprite.getPosition().x <= W_WIDTH - player.width) 
 			{
+				player.texture.loadFromFile("./resources/images/horseright.png");
+				player.sprite.setTexture(&player.texture);
 				player.sprite.move(player.speed, 0);
 			}
 		}
