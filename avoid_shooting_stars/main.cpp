@@ -13,8 +13,7 @@ const int PLAYER_LIFE = 3;
 
 struct Textures {
 	Texture background_texture;
-	Texture horse_right_texture;
-	Texture horse_left_texture;
+	Texture horse_texture;
 	Texture item_texture;
 };
 
@@ -98,8 +97,7 @@ int main(void)
 	/* Textuers */
 	struct Textures t;
 	t.background_texture.loadFromFile("./resources/images/backgroundimage.png");
-	t.horse_left_texture.loadFromFile("./resources/images/horseleft.png");
-	t.horse_right_texture.loadFromFile("./resources/images/horseright.png");
+	t.horse_texture.loadFromFile("./resources/images/horse.png");
 	t.item_texture.loadFromFile("./resources/images/item.png");
 
 	/* SoundBuffers & Sound */
@@ -137,7 +135,7 @@ int main(void)
 
 	/* Player */
 	Player player;
-	player.sprite.setTexture(&t.horse_right_texture);
+	player.sprite.setTexture(&t.horse_texture);
 	player.sprite.setFillColor(Color::White);
 	player.sprite.setSize(Vector2f(player.width, player.height));
 	player.sprite.setPosition(W_WIDTH / 2, W_HEIGHT * 0.8);
@@ -188,9 +186,8 @@ int main(void)
 		{
 			if (player.sprite.getPosition().x >= 0) 
 			{
-				player.sprite.setTexture(&t.horse_left_texture);
+				player.sprite.setScale(-1, 1);
 				player.sprite.move(-player.speed, 0);
-				//s.move.play();
 			}
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Right) ||
@@ -198,9 +195,8 @@ int main(void)
 		{
 			if (player.sprite.getPosition().x <= W_WIDTH - player.width) 
 			{
-				player.sprite.setTexture(&t.horse_right_texture);
+				player.sprite.setScale(1, 1);
 				player.sprite.move(player.speed, 0);
-			//	s.move.play();
 			}
 		}
 
