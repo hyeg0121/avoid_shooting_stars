@@ -7,11 +7,24 @@
 /* TODO LIST
 1) 아이템 넣기
 2) 별똥별 떨어지는 속도 조금씩 올리기
-3) 말 걸을 때 다그닥 소리 넣기
-4) 배경 음악 넣기
-5) 게임 오버 때 효과음 히이잉 넣기
 */
 using namespace sf;
+
+struct Textures {
+	Texture background_texture;
+	Texture horse_right_texture;
+	Texture horse_left_texture;
+};
+
+struct SBuffers {
+	SoundBuffer bgm_buffer;
+	SoundBuffer move_buffer;
+};
+
+struct Sounds {
+	Sound bgm;
+	Sound move;
+};
 
 struct Player
 {
@@ -28,12 +41,6 @@ struct Shooting_stars {
 	int speed = 3 ;
 	int width = 40, height = 40;
 	int respwan_time = 4;
-};
-
-struct Textures {
-	Texture background_texture;
-	Texture horse_right_texture;
-	Texture horse_left_texture;
 };
 
 int circular_collision_detection(RectangleShape rect1,  RectangleShape rect2) {
@@ -75,6 +82,16 @@ int main(void)
 	t.horse_left_texture.loadFromFile("./resources/images/horseleft.png");
 	t.horse_right_texture.loadFromFile("./resources/images/horseright.png");
 
+	/* SoundBuffers & Sound */
+	struct SBuffers sb;
+	sb.bgm_buffer.loadFromFile("./resources/sounds/BGM.flac");
+	sb.move_buffer.loadFromFile("./resources/sounds/move.flac");
+	struct Sounds s;
+	s.bgm.setBuffer(sb.bgm_buffer);
+	s.move.setVolume(70);
+	s.move.setBuffer(sb.move_buffer);
+	s.move.setVolume(130);
+
 	/* Font */
 	Font font;
 	font.loadFromFile("C:\\windows\\Fonts\\comicbd.ttf");
@@ -88,6 +105,8 @@ int main(void)
 	RectangleShape bg;
 	bg.setTexture(&t.background_texture);
 	bg.setSize(Vector2f(W_WIDTH, W_HEIGHT));
+	s.bgm.setLoop(1);
+	s.bgm.play();
 
 	/* GameOver */
 	RectangleShape gameover;
@@ -102,7 +121,7 @@ int main(void)
 	player.sprite.setFillColor(Color::White);
 	player.sprite.setSize(Vector2f(player.width, player.height));
 	player.sprite.setPosition(W_WIDTH / 2, W_HEIGHT * 0.8);
-	player.life = 3;
+	player.life = 1;
 
 	/* Shooting_stars */
 	struct Shooting_stars s_star; //sample
@@ -130,6 +149,8 @@ int main(void)
 			{
 			case Event::Closed :
 				window.close();
+			case Event::KeyPressed :
+				s.move.play();
 			default:
 				break;
 			}
@@ -143,6 +164,7 @@ int main(void)
 			{
 				player.sprite.setTexture(&t.horse_left_texture);
 				player.sprite.move(-player.speed, 0);
+				//s.move.play();
 			}
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Right) ||
@@ -152,6 +174,7 @@ int main(void)
 			{
 				player.sprite.setTexture(&t.horse_right_texture);
 				player.sprite.move(player.speed, 0);
+			//	s.move.play();
 			}
 		}
 
@@ -186,6 +209,7 @@ int main(void)
 		window.clear(Color::Black);
 		window.draw(bg);
 
+		//게임오버
 		if (player.life < 0) {
 			window.draw(gameover);
 		}
