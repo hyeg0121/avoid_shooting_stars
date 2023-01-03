@@ -75,6 +75,7 @@ void respwan_star(Shooting_stars * stars) {
 		stars[i].sprite.setSize(Vector2f(stars[i].width, stars[i].height));
 		stars[i].speed++;
 		stars[i].sprite.setPosition(rand() % W_WIDTH, rand() % W_HEIGHT * 0.5);
+		stars[i].is_collide = 0;
 	}
 }
 
@@ -150,6 +151,7 @@ int main(void)
 		stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
 		stars[i].sprite.setPosition(rand() % W_WIDTH-s_star.width, rand() % W_HEIGHT * 0.4);
 		stars[i].sprite.setTexture(&s_star.texture);
+		stars[i].is_collide = 0;
 	}
 
 	/* Item */
@@ -221,6 +223,7 @@ int main(void)
 			{
 				score -= 100;
 				player.life--;
+				stars[i].is_collide = 1;
 			}
 		}
 		
@@ -271,7 +274,10 @@ int main(void)
 			window.draw(player.sprite);
 			window.draw(text);
 			for (int i = 0; i < STARS_NUM; i++)
-				window.draw(stars[i].sprite);
+			{
+				if(!(stars[i].is_collide))
+					window.draw(stars[i].sprite);
+			}
 			if (item.is_present)
 				window.draw(item.sprite);
 		}
