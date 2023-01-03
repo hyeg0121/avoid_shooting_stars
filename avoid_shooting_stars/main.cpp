@@ -38,9 +38,10 @@ struct Player
 struct Shooting_stars {
 	RectangleShape sprite;
 	Texture texture;
-	int speed = 3 ;
+	int speed;
 	int width = 40, height = 40;
 	int respwan_time = 4;
+	int increased_speed;
 };
 
 int circular_collision_detection(RectangleShape rect1,  RectangleShape rect2) {
@@ -126,10 +127,12 @@ int main(void)
 	/* Shooting_stars */
 	struct Shooting_stars s_star; //sample
 	s_star.texture.loadFromFile("./resources/images/shooting-star.png");
+	s_star.increased_speed = 1;
+
 	struct Shooting_stars stars[STARS_NUM];
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
-		stars[i].speed = -(rand() % 8 + 1);
+		stars[i].speed = 5;
 		stars[i].sprite.setPosition(rand() % W_WIDTH-s_star.width, rand() % W_HEIGHT * 0.4);
 		stars[i].sprite.setTexture(&s_star.texture);
 	}
@@ -182,7 +185,7 @@ int main(void)
 		//stars 움직임
 		for (int i = 0; i < STARS_NUM; i++)
 		{
-			stars[i].sprite.move(0, s_star.speed);
+			stars[i].sprite.move(0, stars[i].speed);
 		}
 
 		//일정 시간 뒤 stars respwan
@@ -191,7 +194,7 @@ int main(void)
 			for (int i = 0; i < STARS_NUM; i++) 
 			{
 				stars[i].sprite.setSize(Vector2f(s_star.width, s_star.height));
-				stars[i].speed = -(rand() % 8 + 1);
+				stars[i].speed;
 				stars[i].sprite.setPosition(rand() % W_WIDTH - s_star.width, rand() % W_HEIGHT * 0.3);
 			}
 		}
@@ -215,6 +218,7 @@ int main(void)
 			if (Keyboard::isKeyPressed(Keyboard::Space)) {
 				player.life = 1;
 				is_gameover = 0;
+				score = 0;
 			}
 		}
 		else 
