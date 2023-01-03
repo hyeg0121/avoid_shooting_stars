@@ -9,6 +9,7 @@ using namespace sf;
 const int W_WIDTH = 1000, W_HEIGHT = 1000;
 const int STARS_NUM = 15;
 const int MAX_PlAYER_SPEED = 8;
+const int PLAYER_LIFE = 3;
 
 struct Textures {
 	Texture background_texture;
@@ -140,7 +141,7 @@ int main(void)
 	player.sprite.setFillColor(Color::White);
 	player.sprite.setSize(Vector2f(player.width, player.height));
 	player.sprite.setPosition(W_WIDTH / 2, W_HEIGHT * 0.8);
-	player.life = 1;
+	player.life = PLAYER_LIFE;
 
 	/* Shooting_stars */
 	struct Shooting_stars s_star; //sample
@@ -163,7 +164,7 @@ int main(void)
 	{
 		spent_time = clock() - start_time;
 		score = (spent_time / 1000) * 25;
-		sprintf_s(info, "SCORE : %6d", score);
+		sprintf_s(info, "SCORE : %6d\nLIFE : %d", score, player.life);
 		text.setString(info);
 
 		Event event;
@@ -219,11 +220,11 @@ int main(void)
 		//player와 충돌
 		for (int i = 0; i < STARS_NUM; i++) 
 		{
-			if (collision_detection(player.sprite, stars[i].sprite)) 
+			if (collision_detection(player.sprite, stars[i].sprite) &&
+				!(stars[i].is_collide))
 			{
-				score -= 100;
-				player.life--;
 				stars[i].is_collide = 1;
+				--player.life;
 			}
 		}
 		
@@ -254,12 +255,12 @@ int main(void)
 		window.draw(bg);
 
 		//게임오버
-		if (player.life < 0)
+		if (player.life <= 0)
 		{
 			window.draw(gameover);
 			if (Keyboard::isKeyPressed(Keyboard::Space)) 
 			{
-				player.life = 3;
+				player.life = PLAYER_LIFE;
 				is_gameover = 0;
 				start_time = clock();
 				for (int i = 0; i < STARS_NUM; i++)
