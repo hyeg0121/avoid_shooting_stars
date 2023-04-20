@@ -3,3 +3,6 @@
 ### Sound effect
 -  말이 달리는 소리 : <a href="https://opengameart.org/content/jump-sound-effect-yo-frankie">jump-sound-effect-yo-frankie</a> (CC-BY 3.0)
 - Background Music : <a href ="https://freesound.org/s/464914/">(Cute Loop) Pink Bunny Death Metal</a>
+
+### Preview
+![image](https://github.com/hyeg0121/avoid_shooting_stars/blob/master/avoid_shooting_stars/preview/main1.png)![image](https://github.com/hyeg0121/avoid_shooting_stars/blob/master/avoid_shooting_stars/preview/main2.png)
